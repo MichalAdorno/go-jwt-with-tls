@@ -7,6 +7,8 @@ gencert:
 	@echo "make gencert 	- Create a self-signed X.509 certificate (dev only)"
 	rm -f server.crt
 	rm -f server.key
+	rm -f $(BUILD_FOLDER)/server.crt
+	rm -f $(BUILD_FOLDER)/server.key
 	# Key considerations for algorithm "RSA" ≥ 2048-bit
 	openssl genrsa -out server.key 2048
 	# Key considerations for algorithm "ECDSA" ≥ secp384r1
@@ -19,6 +21,10 @@ gencert:
 build:
 	@echo "make build	- Build the binary"
 	go build -a -o $(BUILD_FOLDER)/$(BUILD_OUTPUT)
+	cp server.crt $(BUILD_FOLDER)/server.crt
+	cp server.key $(BUILD_FOLDER)/server.key
+	cp config.yaml $(BUILD_FOLDER)/config.yaml
+	chmod 755 $(BUILD_FOLDER)/$(BUILD_OUTPUT)
 
 run:
 	@echo "make run      	- Run the binary with an available config.yaml"

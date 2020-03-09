@@ -10,7 +10,7 @@ import (
 
 func main() {
 	var yamlConfig config.YamlConfig
-	yamlConfig.GetConf()
+	yamlConfig.ReadConf()
 
 	tlsRespHeaderHandler := handler.TlsResponseHeaderHandler
 	logHandler := handler.LogHttpHandler
@@ -37,6 +37,6 @@ func main() {
 		TLSConfig:    cfg,
 		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0),
 	}
-	log.Fatal(srv.ListenAndServeTLS("server.crt", "server.key"))
+	log.Fatal(srv.ListenAndServeTLS(yamlConfig.GetCertPath(), yamlConfig.GetKeyPath()))
 
 }

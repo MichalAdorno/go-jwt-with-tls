@@ -8,10 +8,14 @@ import (
 )
 
 type YamlConfig struct {
-	HttpsPort string `yaml:"app.httpsPort"`
+	App struct {
+		HttpsPort string `yaml:"httpsPort"`
+		CertPath  string `yaml:"certPath"`
+		KeyPath   string `yaml:"keyPath"`
+	} `yaml:"app"`
 }
 
-func (c *YamlConfig) GetConf() *YamlConfig {
+func (c *YamlConfig) ReadConf() *YamlConfig {
 
 	yamlFile, err := ioutil.ReadFile("config.yaml")
 	if err != nil {
@@ -26,5 +30,11 @@ func (c *YamlConfig) GetConf() *YamlConfig {
 }
 
 func (c *YamlConfig) GetServerPort() string {
-	return ":" + c.HttpsPort
+	return ":" + c.App.HttpsPort
+}
+func (c *YamlConfig) GetKeyPath() string {
+	return c.App.KeyPath
+}
+func (c *YamlConfig) GetCertPath() string {
+	return c.App.CertPath
 }
