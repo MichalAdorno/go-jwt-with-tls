@@ -6,12 +6,17 @@ import (
 	"jwt_auth/handler"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 func main() {
 	var yamlConfig config.YamlConfig
 	yamlConfig.ReadConf()
 
+	sigChan := make(chan os.Signal)
+	listenForOsSignals(sigChan)
 	tlsRespHeaderHandler := handler.TlsResponseHeaderHandler
 	logHandler := handler.LogHttpHandler
 
@@ -39,4 +44,18 @@ func main() {
 	}
 	log.Fatal(srv.ListenAndServeTLS(yamlConfig.GetCertPath(), yamlConfig.GetKeyPath()))
 
+}
+
+func listenForOsSignals(sigChan chan os.Signal) {
+	signal.Notify(sigChan, syscall.SIGTERM, syscall.SIGINT)
+	go func() {
+		sig := <-sigChan
+		switch sig {
+		case syscall.SIGINT:
+			log.Printf("Exiting: received the SIGINT signal.")
+		case syscall.SIGTERM:
+			log.Printf("Exiting: received the SIGTERM signal.")
+		}
+		os.Exit(1)
+	}()
 }
