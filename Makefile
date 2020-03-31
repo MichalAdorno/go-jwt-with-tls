@@ -2,7 +2,9 @@ SHELL := /bin/bash
 BUILD_OUTPUT=main
 BUILD_FOLDER=build
 APP_PORT?=8080
-
+APP_IMAGE_NAME=jwt_auth
+APP_CONTAINER_PORT=8080
+APP_CONTAINER_NAME=jwt
 gencert:
 	@echo "make gencert 	- Create a self-signed X.509 certificate (dev only)"
 	rm -f server.crt
@@ -23,12 +25,12 @@ build:
 	go build -a -o $(BUILD_FOLDER)/$(BUILD_OUTPUT)
 	cp server.crt $(BUILD_FOLDER)/server.crt
 	cp server.key $(BUILD_FOLDER)/server.key
-	cp config.yaml $(BUILD_FOLDER)/config.yaml
+	cp config.yaml $(BUILD_FOLDER)/config_for_host.yaml
 	chmod 755 $(BUILD_FOLDER)/$(BUILD_OUTPUT)
 
 run:
 	@echo "make run      	- Run the binary with an available config.yaml"
-	./$(BUILD_FOLDER)/$(BUILD_OUTPUT)
+	./$(BUILD_FOLDER)/$(BUILD_OUTPUT) -config=config_for_host.yaml
 
 clean:
 	@echo "make clean   	- Clean the build output"
@@ -48,15 +50,35 @@ killapp:
 ###################################################################
 ###################################################################
 ###################################################################
+
+docker-build:
+	docker build -t $(APP_IMAGE_NAME) . --no-cache
+docker-run:
+	docker rm -f $(APP_CONTAINER_NAME) || true && \
+	docker run -p $(APP_PORT):$(APP_CONTAINER_PORT) --name $(APP_CONTAINER_NAME)  $(APP_IMAGE_NAME)
+docker-rm:
+	docker rm -f $(APP_CONTAINER_NAME)
+
+###################################################################
+###################################################################
+###################################################################
+
 help:
-	@echo
-	@echo Build commands:
-	@echo "  make build		- Build the binary"
-	@echo "  make clean   	- Clean the build output"
-	@echo "  make gencert 	- Create a self-signed X.509 certificate (dev only)"
-	@echo "  make help   	- Show current build info"
-	@echo "  make killapp   - Kill process of the app on the configured port"
-	@echo "  make run      	- Run the binary with available config.yaml"
-	@echo
+	@echo "============================================================================="
+	@echo "Build commands:																"
+	@echo "   	make build			- Build the binary									"
+	@echo "   	make clean   		- Clean the build output							"
+	@echo "   	make gencert 		- Create a self-signed X.509 certificate (dev only)	"
+	@echo "   	make help   		- Show current build info							"
+	@echo "   	make killapp   		- Kill process of the app on the configured port	"
+	@echo "   	make run      		- Run the binary with available config.yaml			"
+	@echo "============================================================================="
+	@echo "Docker-related commands:														"
+	@echo "		make docker-build	- Build application image							"
+	@echo "	  	make docker-run		- Run application container							"
+	@echo "		make docker-rm		- Remove forcefully application container			"
+	@echo "============================================================================="
+																
 
 .SILENT:
+

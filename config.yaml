@@ -1,4 +1,4 @@
 app:
     httpsPort: 8080
-    certPath: server.crt
-    keyPath: server.key
+    certPath: /target/server.crt
+    keyPath: /target/server.key

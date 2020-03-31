@@ -15,9 +15,9 @@ type YamlConfig struct {
 	} `yaml:"app"`
 }
 
-func (c *YamlConfig) ReadConf() *YamlConfig {
+func (c *YamlConfig) ReadConf(configFilePath string) *YamlConfig {
 
-	yamlFile, err := ioutil.ReadFile("config.yaml")
+	yamlFile, err := ioutil.ReadFile(configFilePath)
 	if err != nil {
 		log.Printf("yamlFile.Get err   #%v ", err)
 	}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/tls"
+	"flag"
 	"jwt_auth/config"
 	"jwt_auth/handler"
 	"log"
@@ -13,7 +14,10 @@ import (
 
 func main() {
 	var yamlConfig config.YamlConfig
-	yamlConfig.ReadConf()
+	var configFilePath string
+	flag.StringVar(&configFilePath, "config", "/target/config.yaml", "path to config yaml file")
+	flag.Parse()
+	yamlConfig.ReadConf(configFilePath)
 
 	sigChan := make(chan os.Signal)
 	listenForOsSignals(sigChan)
