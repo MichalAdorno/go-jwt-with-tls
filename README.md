@@ -9,7 +9,6 @@
 - add support for CSRF Prevention
 - add user roles and privileges - may require new endpoints etc
 - write some illustrative security-related tests
-- dockerize using multi-stage builds
 - add Makefile rules for code coverage, race condition checks etc
 - add some performance tests (eg locust?)
 - add list of invalidated tokens and relevant endpoint to invalidate
